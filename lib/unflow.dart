@@ -8,9 +8,8 @@ class Unflow {
 
   static const MethodChannel _channel = MethodChannel('unflow');
 
-  //TODO rename to initialize, and support enableLogging
-  Future<void> setApiKey({required String apiKey}) async {
-    final params = <String, dynamic>{'apiKey': apiKey};
+  Future<void> initialize({required String apiKey, required bool enableLogging}) async {
+    final params = <String, dynamic>{'apiKey': apiKey, 'enableLogging': enableLogging};
     await _channel.invokeMethod('unflow#setApiKey', params);
   }
 

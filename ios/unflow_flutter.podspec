@@ -15,6 +15,7 @@ Tired of building the same simple screens over and over again? Empower your prod
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
+  s.dependency 'Unflow'
   s.platform = :ios, '9.0'
 
   # Flutter.framework does not contain a i386 slice.
