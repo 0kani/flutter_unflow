@@ -10,7 +10,7 @@ class Unflow {
 
   Future<void> initialize({required String apiKey, required bool enableLogging}) async {
     final params = <String, dynamic>{'apiKey': apiKey, 'enableLogging': enableLogging};
-    await _channel.invokeMethod('unflow#setApiKey', params);
+    await _channel.invokeMethod('unflow#initialize', params);
   }
 
   Future<void> sync() async {
@@ -34,10 +34,7 @@ class Unflow {
 
   Future<List<Opener>> getOpeners() async {
     final openers = await _channel.invokeMethod('unflow#getOpeners');
-    if (openers != null) {
-      openers.map((opener) => Opener.fromJson(Map<String, dynamic>.from(opener)));
-    }
-    return [];
+    return openers ? openers.map((opener) => Opener.fromJson(Map<String, dynamic>.from(opener))) : [];
   }
 
   //TODO missing implementations
