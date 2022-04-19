@@ -12,12 +12,12 @@ flutter pub add unflow_flutter
 WIP
 
 ## TODO
-[ ] Create tests
-[ ] Method to set an analyticsListener
-[ ] Method to setCustomFonts
-[ ] Method to trackEvent
-[ ] Create widget Opener
-[ ] Create examples
+- [ ] Create tests
+- [ ] Method to set an analyticsListener
+- [ ] Method to setCustomFonts
+- [ ] Method to trackEvent
+- [ ] Create widget Opener
+- [ ] Create examples
 
 ## Contributing
 
