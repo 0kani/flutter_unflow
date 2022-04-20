@@ -23,11 +23,11 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    Unflow.instance.initialize(apiKey: 'YOUR_UNFLOW_KEY', enableLogging: true);
+    Unflow.instance.initialize(apiKey: 'UNFLOW_API_KEY', enableLogging: false);
     Unflow.instance.sync();
 
-    // TODO: make example open screen with button
-    // Unflow.instance.openScreen(screenId: "SCREEN_ID");
+    // TODO: make example using analytics
+    // Unflow.instance.unflowAnalyticsStream.listen((UnflowEvent event) {});
 
     // TODO: make example displaying openers
     // var openers = Unflow.instance.getOpeners();
@@ -47,9 +47,13 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Unflow example app'),
         ),
         body: const Center(
-          child: Text('Hello'),
+          child: TextButton(onPressed: open, child: Text('Abrir screen')),
         ),
       ),
     );
   }
+}
+
+void open() {
+  Unflow.instance.openScreen(screenId: "SCREEN_ID");
 }

@@ -1,12 +1,16 @@
 package com.unflow.unflow_flutter
 
 import android.app.Activity
+import android.util.Log
 import androidx.annotation.NonNull
+import com.unflow.analytics.AnalyticsListener
+import com.unflow.analytics.domain.model.UnflowEvent
 import com.unflow.androidsdk.UnflowSdk
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -16,16 +20,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UnflowFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
+class UnflowFlutterPlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
   private val mainScope = CoroutineScope(Dispatchers.Main)
   private lateinit var channel : MethodChannel
+  private lateinit var eventChannel : EventChannel
   private lateinit var activity: Activity
+  private var eventSink: EventChannel.EventSink? = null
   private var unflowStarted = false
 
+  override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+    eventSink = events
+  }
+
+  override fun onCancel(arguments: Any?) {
+    eventSink = null
+  }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "unflow")
     channel.setMethodCallHandler(this)
+    eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "unflow_events")
+    eventChannel.setStreamHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -34,10 +49,23 @@ class UnflowFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         val apiKey = call.argument<String>("apiKey")
         val enableLogging = call.argument<Boolean>("enableLogging") ?: false
         if(apiKey != null) {
+          val unflowAnalyticsListener = object : AnalyticsListener {
+            override fun onEvent(event: UnflowEvent) {
+              val map = mutableMapOf<String, Any?>()
+              map["id"] = event.id
+              map["name"] = event.name
+              map["occurred_at"] = event.occurredAt
+              map["screen_id"] = event.metadata["screen_id"]
+              map["rating"] = event.metadata["rating"]
+              eventSink?.success(map)
+            }
+          }
+
           UnflowSdk.initialize(
             application = activity.application,
             config = UnflowSdk.Config(apiKey, enableLogging = enableLogging),
-            activityProvider = CurrentActivityProvider { activity }
+            activityProvider = CurrentActivityProvider { activity },
+            analyticsListener = unflowAnalyticsListener
           )
 
           unflowStarted = true
