@@ -2,11 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:unflow_flutter/opener.dart';
+import 'package:unflow_flutter/unflow_event.dart';
 
 class Unflow {
   static final Unflow instance = Unflow();
 
   static const MethodChannel _channel = MethodChannel('unflow');
+  static const EventChannel _eventChannel = EventChannel('unflow_events');
+
+  Stream<UnflowEvent> get unflowAnalyticsStream async* {
+    await for (dynamic event in _eventChannel.receiveBroadcastStream().map((event) => event)) {
+      yield UnflowEvent.fromJson(event);
+    }
+  }
 
   Future<void> initialize({required String apiKey, required bool enableLogging}) async {
     final params = <String, dynamic>{'apiKey': apiKey, 'enableLogging': enableLogging};
@@ -38,7 +46,6 @@ class Unflow {
   }
 
   //TODO missing implementations
-  // analyticsListener
   // setCustomFonts
   // trackEvent
 }

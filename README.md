@@ -13,7 +13,8 @@ WIP
 
 ## TODO
 - [ ] Create tests
-- [ ] Method to set an analyticsListener
+- [X] Method to set an analyticsListener
+- [ ] Is missing to support metadata analytics on iOS
 - [ ] Method to setCustomFonts
 - [ ] Method to trackEvent
 - [ ] Create widget Opener
