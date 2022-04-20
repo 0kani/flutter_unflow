@@ -2,28 +2,50 @@ import Flutter
 import UIKit
 import UnflowUI
 
-public class SwiftUnflowFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftUnflowFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHandler, AnalyticsListener {
   var unflowStarted = false
+  var eventSink: FlutterEventSink?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "unflow", binaryMessenger: registrar.messenger())
     let instance = SwiftUnflowFlutterPlugin()
+    let channel = FlutterMethodChannel(name: "unflow", binaryMessenger: registrar.messenger())
     registrar.addMethodCallDelegate(instance, channel: channel)
+    let eventChannel = FlutterEventChannel(name: "unflow_events", binaryMessenger: registrar.messenger())
+    eventChannel.setStreamHandler(instance)
+  }
+
+  public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+      eventSink = events
+    return nil
+  }
+  
+  public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+      eventSink = nil
+    return nil
+  }
+    
+  public func onEvent(event: UnflowEvent) {
+      let unflowEvent = [
+          "id": event.id,
+          "name": event.name,
+          "occurred_at": event.occuredAt,
+      ] as [String : Any?]      
+      eventSink?(unflowEvent)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
         case "unflow#initialize":
-            let arguments = call.arguments as? NSDictionary
-            guard let apiKey = arguments?["apiKey"] as? String else {
-                result(FlutterError(code: "apiKey is missing", message: nil, details: nil))
-                return
-            }
-            let enableLogging = arguments?["enableLogging"] as? Bool ?? false
             if #available(iOS 13.0, *) {
+                let arguments = call.arguments as? NSDictionary
+                guard let apiKey = arguments?["apiKey"] as? String else {
+                    result(FlutterError(code: "apiKey is missing", message: nil, details: nil))
+                    return
+                }
+                let enableLogging = arguments?["enableLogging"] as? Bool ?? false
                 _ = UnflowSDK.initialize(
                     config: UnflowSDK.Config(apiKey: apiKey, enableLogging: enableLogging),
-                    analyticsListener: nil
+                    analyticsListener: self
                 )
                 unflowStarted = true
             }
