@@ -42,7 +42,11 @@ class Unflow {
 
   Future<List<Opener>> getOpeners() async {
     final openers = await _channel.invokeMethod('unflow#getOpeners');
-    return openers ? openers.map((opener) => Opener.fromJson(Map<String, dynamic>.from(opener))) : [];
+    List<Opener> list = [];
+    for (var opener in openers) {
+      list.add(Opener.fromJson(Map<String, dynamic>.from(opener)));
+    }
+    return list;
   }
 
   //TODO missing implementations
