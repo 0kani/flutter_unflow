@@ -1,3 +1,6 @@
+## 0.0.1-dev.4
+Fix error on android release version
+
 ## 0.0.1-dev.3
 Fix error on get openers
 

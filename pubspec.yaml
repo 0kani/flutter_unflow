@@ -1,6 +1,6 @@
 name: unflow_flutter
 description: Tired of building the same simple screens over and over again? Empower your product team to create and ship content using the Unflow mobile SDK.
-version: 0.0.1-dev.3
+version: 0.0.1-dev.4
 homepage: https://github.com/checa-app/flutter_unflow
 
 environment:
