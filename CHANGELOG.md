@@ -1,3 +1,6 @@
+## 0.1.0
+Support older Dart sdk
+
 ## 0.0.1-dev.4
 Fix error on android release version
 
