@@ -1,3 +1,6 @@
+## 0.0.1-dev.6
+Upgrate android version to 1.7.0
+
 ## 0.0.1-dev.5
 Support older Dart sdk
 
