@@ -95,9 +95,9 @@ public class SwiftUnflowFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHan
             }
         case "unflow#getOpeners":
             if (unflowStarted) {
-                if #available(iOS 13.0, *) {
-                    UnflowSDK.client.openers(id: "default")
-                        .sink(receiveValue: { openers in
+                if #available(iOS 13.0, *) {                    
+                    let _ = UnflowSDK.client.openers(id: "default")
+                        .sink { openers in
                             let mappedOpeners = openers.map {
                                 [
                                     "id": $0.id,
@@ -108,7 +108,7 @@ public class SwiftUnflowFlutterPlugin: NSObject, FlutterPlugin, FlutterStreamHan
                                 ] as [String : Any?]
                             }
                             result(mappedOpeners)
-                        })
+                        }
                 }
             }
             else {

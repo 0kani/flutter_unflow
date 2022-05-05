@@ -1,3 +1,6 @@
+## 0.0.1-dev.7
+Downgrade dart to a stable version
+
 ## 0.0.1-dev.6
 Upgrate android version to 1.7.0
 
