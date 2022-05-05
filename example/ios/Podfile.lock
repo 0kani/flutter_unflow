@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - Unflow (1.6.3)
+  - Unflow (1.7.0)
   - unflow_flutter (0.0.1):
     - Flutter
     - Unflow
@@ -21,8 +21,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  Unflow: 77ef238c57d5d2804f816c75c4f6d5a92d0816fd
-  unflow_flutter: 3df75d6d5f1a4b737eb0ce46f179f085eb6d3f46
+  Unflow: d9f037109fdaba8c306a1be8f2dda564b3915c36
+  unflow_flutter: 4a2e99b20a16e3afe9b2ab0fe9f49df064f4bb3e
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
