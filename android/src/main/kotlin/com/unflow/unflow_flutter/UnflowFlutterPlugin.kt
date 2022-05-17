@@ -49,27 +49,32 @@ class UnflowFlutterPlugin: FlutterPlugin, MethodCallHandler, EventChannel.Stream
         val apiKey = call.argument<String>("apiKey")
         val enableLogging = call.argument<Boolean>("enableLogging") ?: false
         if(apiKey != null) {
-          val unflowAnalyticsListener = object : AnalyticsListener {
-            override fun onEvent(event: UnflowEvent) {
-              val map = mutableMapOf<String, Any?>()
-              map["id"] = event.id
-              map["name"] = event.name
-              map["occurred_at"] = event.occurredAt
-              map["screen_id"] = event.metadata["screen_id"]
-              map["rating"] = event.metadata["rating"]
-              eventSink?.success(map)
+          try {
+            val unflowAnalyticsListener = object : AnalyticsListener {
+              override fun onEvent(event: UnflowEvent) {
+                val map = mutableMapOf<String, Any?>()
+                map["id"] = event.id
+                map["name"] = event.name
+                map["occurred_at"] = event.occurredAt
+                map["screen_id"] = event.metadata["screen_id"]
+                map["rating"] = event.metadata["rating"]
+                eventSink?.success(map)
+              }
             }
+
+            UnflowSdk.initialize(
+              application = activity.application,
+              config = UnflowSdk.Config(apiKey, enableLogging = enableLogging),
+              activityProvider = CurrentActivityProvider { activity },
+              analyticsListener = unflowAnalyticsListener
+            )
+
+            unflowStarted = true
+            result.success(null)
+
+          } catch (e: Exception) {
+            // Must be safe
           }
-
-          UnflowSdk.initialize(
-            application = activity.application,
-            config = UnflowSdk.Config(apiKey, enableLogging = enableLogging),
-            activityProvider = CurrentActivityProvider { activity },
-            analyticsListener = unflowAnalyticsListener
-          )
-
-          unflowStarted = true
-          result.success(null)
         }
         else {
           result.error("apiKey is missing", null, null)
@@ -77,7 +82,11 @@ class UnflowFlutterPlugin: FlutterPlugin, MethodCallHandler, EventChannel.Stream
       }
       "unflow#sync" -> {
         if(unflowStarted) {
-          UnflowSdk.client().sync()
+          try {
+            UnflowSdk.client().sync()
+          } catch (e: Exception) {
+            // Must be safe
+          }
           result.success(null)
         } else {
           result.error("Unflow not started", null, null)
